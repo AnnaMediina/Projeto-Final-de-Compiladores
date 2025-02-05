@@ -2,9 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//"/*"([^*]|\*+[^*/])*"*"+"/"   { return COMENTARIO; }
+//"//"[^\n]*	{ return COMENTARIO; }
+//yylval = atoi(yytext)
 // Declaração das funções e variáveis globais
 int linha = 1;
+
+
+
 %}
+
 
 %%
 "int"         { return INT; }
@@ -14,10 +21,8 @@ int linha = 1;
 "return"      { return RETURN; }
 "while"       { return WHILE; }
 
-[0-9]+        { yylval = atoi(yytext); return NUM; }
+[0-9]+        { return NUM; }
 [A-Za-z]+     { return ID; }
-"/*"([^*]|\*+[^*/])*"*"+"/"   { return COMENTARIO; }
-"//"[^\n]*	{ return COMENTARIO; }
 
 "+"           { return ADD; }
 "-"           { return SUB; }
@@ -45,11 +50,15 @@ int linha = 1;
 " "			  { }
 "\t"		  { }
 [\r]+         { /* Ignorar */ }
-.             { printf("\nErro léxico na linha %d, caractere desconhecido: %s\n", linha+1, yytext); return ERRO; }
+.             { printf("\nERRO LÉXICO: %s, LINHA: %d\n", yytext, linha+1); return ERRO; }
 
 %%
 
-int main(int argc, char **argv) {
+int obter_token(){
+    return yylex();
+}
+
+int main(int argc, char **argv){
     // Inicia o analisador léxico
     yylex();
     return 0;
