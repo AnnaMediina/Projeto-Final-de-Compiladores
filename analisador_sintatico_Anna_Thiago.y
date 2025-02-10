@@ -1,5 +1,4 @@
 %{
-
 #include <iostream>
 using namespace std;
 
@@ -9,31 +8,34 @@ extern "C"
   int yylex(void);
 }
 
-void yyerror(char *);
+void yyerror(const char *);
 %}
 
+%token IF ELSE INT VOID WHILE RETURN 
+%token AB_COL FE_COL AB_PRT FE_PRT AB_CV FE_CV PT_VG VG
+%token MAIOR MENOR IGUAL MEN_IGL MAI_IGL COMP_IGL DIFF_IGL
+
 %start programa
-%token ID NUM FIMLIN ERRO
+%token ID NUM 
+%token FIMLIN ERRO
 %left ADD SUB
 %left MULT DIV
-
-%token IF ELSE INT VOID WHILE RETURN
-%token AB_COL FE_COL AB_PRT FE_PRT AB_CV FE_CV PT_VG VG
-%token MAIOR MENOR IGUAL
-%token MEN_IGL MAI_IGL COMP_IGL DIFF_IGL
+%nonassoc IFX
+%nonassoc AB_PRT
+%left ELSE
 
 %%
 
 programa: declaracao_lista
     ;
 declaracao_lista: declaracao_lista declaracao
-    |    declaracao
+    | declaracao
     ;
 declaracao: var_declaracao
-    |    fun_declaracao
+    | fun_declaracao
     ;
 var_declaracao: tipo_especificador ID PT_VG
-    |   tipo_especificador ID AB_COL NUM FE_COL PT_VG
+    | tipo_especificador ID AB_COL NUM FE_COL PT_VG
     ;
 tipo_especificador: INT
     | VOID
@@ -51,10 +53,10 @@ param: tipo_especificador ID
     ;
 composto_decl: AB_CV local_declaracoes statement_lista FE_CV
     ;
-local_declaracoes: /*  vazio  */
+local_declaracoes: /* vazio */
     | local_declaracoes var_declaracao
     ;
-statement_lista: /*  vazio  */
+statement_lista: /* vazio */
     | statement_lista statement
     ;
 statement: expressao_decl
@@ -66,13 +68,13 @@ statement: expressao_decl
 expressao_decl: expressao PT_VG
     | PT_VG
     ;
-selecao_decl: IF AB_PRT expressao FE_PRT statement
+selecao_decl: IF AB_PRT expressao FE_PRT statement %prec IFX
     | IF AB_PRT expressao FE_PRT statement ELSE statement
     ;
 iteracao_decl: WHILE AB_PRT expressao FE_PRT statement
     ;
 retorno_decl: RETURN PT_VG
-    | RETURN expressao
+    | RETURN expressao PT_VG
     ;
 expressao: var IGUAL expressao
     | simples_expressao
@@ -109,13 +111,12 @@ fator: AB_PRT expressao FE_PRT
     ;
 ativacao: ID AB_PRT args FE_PRT
     ;
-args: /*  vazio  */
+args: /* vazio */
     | arg_lista
     ;
 arg_lista: arg_lista VG expressao
     | expressao
     ;
-
 
 %%
 
@@ -125,9 +126,8 @@ int main()
   return yyparse();
 }
 
-void yyerror(char * msg)
+void yyerror(const char * msg)
 {
   extern char* yytext;
   cout << msg << ": " << yytext << endl;
 }
-
