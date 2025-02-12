@@ -2,10 +2,10 @@ all:
 	bison -d analisador_sintatico_Anna_Thiago.y
 	flex analisador_lexico_Anna_Thiago.l
 	gcc -c lex.yy.c
-	g++ -o analisador lex.yy.o analisador_sintatico_Anna_Thiago.tab.c -lfl
+	gcc -o analisador lex.yy.o analisador_sintatico_Anna_Thiago.tab.c -lfl
 
 run:
-	./analisador < ./entrada.txt
+	./analisador < ./sort.txt
 
 clean:
 	@echo "Limpando arquivos gerados..."
