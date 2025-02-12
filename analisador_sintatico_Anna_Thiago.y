@@ -1,14 +1,14 @@
 %{
-#include <iostream>
-using namespace std;
+#include<stdio.h>
+#include<stdlib.h>
 
-extern "C"
-{
-  int yyparse(void);
-  int yylex(void);
-}
 
+int yyparse(void);
+int yylex(void);
 void yyerror(const char *);
+
+extern int linha;
+
 %}
 
 %token IF ELSE INT VOID WHILE RETURN 
@@ -122,12 +122,16 @@ arg_lista: arg_lista VG expressao
 
 int main()
 {
-  cout << "\nParser em execução...\n";
-  return yyparse();
+  printf("Início análise sintática");
+  int resultado = yyparse();
+
+  if(resultado == 0){
+    printf("Análise sintática feita com sucesso!\n");
+  }
 }
 
 void yyerror(const char * msg)
 {
   extern char* yytext;
-  cout << msg << ": " << yytext << endl;
+  printf("ERRO SINTÁTICO: %s LINHA: %d\n", yytext, linha);
 }
