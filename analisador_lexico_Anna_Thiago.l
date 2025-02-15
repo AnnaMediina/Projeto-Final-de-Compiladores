@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "at_parser.tab.h"
+#include "analisador_sintatico_Anna_Thiago.tab.h"
 
 // Declaração das funções e variáveis globais
 
@@ -18,7 +18,7 @@ int linha = 1;
 "return"      { return RETURN; }
 "while"       { return WHILE; }
 
-[0-9]+        { yylval = atoi(yytext); return NUM; }
+[0-9]+        { return NUM; }
 [A-Za-z]+     { return ID; }
 
 "+"           { return ADD; }

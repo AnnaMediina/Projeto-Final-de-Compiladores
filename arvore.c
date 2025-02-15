@@ -21,6 +21,7 @@ nohS* criaNoh(char *nome) {
 }
 
 void adicionaFilho(nohS *pai, nohS *filho) {
+    if (filho == NULL) return;
     if (pai->filho == NULL){
         pai->filho = malloc(sizeof(nohS*));
         pai->filho[0] = filho;
