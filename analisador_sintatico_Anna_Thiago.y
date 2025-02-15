@@ -3,17 +3,38 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define TAM 211
+
 int yyparse(void);
 int yylex(void);
 void yyerror(const char *);
 
 extern int linha;
 
-struct arvore {
+typedef struct lista_linhas{
+    int linha_v;
+    struct lista_linhas *prox;
+} Tlinhas;
+
+typedef Tlinhas *Plinhas;
+
+typedef struct tabela{
+    char *nome;
+    char tipo;
+    char *escopo;
+    Plinhas linhas;
+    struct tabela *prox;
+} Ttabela;
+
+typedef  Ttabela *Ptabela;
+
+static Ptabela *tab_hash = NULL;
+
+struct arvore{
     char nome [30];
     struct arvore **filho;
     int filhos;
-} ;
+};
 
 typedef struct arvore nohS;
 
@@ -371,6 +392,134 @@ void liberaArvore(nohS *pai) {
     }
     free(pai->filho);
     free(pai);
+}
+
+void inicializa_tabela(){
+    int i;
+
+    tab_hash = (Ptabela*)malloc(TAM * sizeof(Ptabela));
+    for(i = 0; i < TAM; i++) {
+        tab_hash[i] = NULL;
+    }
+}
+
+int hash(char* k){
+    int temp = 0;
+    int i = 0;
+    while (k[i] != '\0'){
+        temp = ((temp << 4) + k[i]) % TAM;
+        ++i;
+    }
+    return temp;
+}
+
+void f_insere(char *nome, int tipo, char *escopo, int linha_v){
+    int h = hash(nome);
+
+    Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
+    ts->nome = strdup(nome);
+    ts->tipo = tipo;
+    ts->escopo = strdup(escopo);
+
+    ts->linhas = (Plinhas)malloc(sizeof(Tlinhas));
+    ts->linhas->linha_v = linha_v;
+    ts->linhas->prox = NULL;
+
+    ts->prox = tab_hash[h];
+    tab_hash[h] = ts; 
+}
+
+void insere(char *nome, int linha_v, char *escopo){
+    int h = hash(nome);
+    Ptabela ts = tab_hash[h];
+    Plinhas l, noval;
+
+    while(ts != NULL){
+        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
+            l = ts->linhas;
+
+            while(l->prox != NULL) l = l->prox;
+
+            noval = (Plinhas)malloc(sizeof(Tlinhas));
+            noval->linha_v = linha_v;
+            noval->prox = NULL;
+            l->prox = noval;
+            return;
+        }
+        ts = ts->prox;
+    }
+}
+
+int busca_id(char *nome, char*escopo){
+    int h = hash(nome);
+    Ptabela ts = tab_hash[h];
+
+    while(ts != NULL){
+        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
+            return 1;
+        }
+        ts = ts->prox;
+    }
+    return 0;
+}
+
+void print(){
+    int i;
+    Plinhas l;
+    Ptabela ts;
+
+    printf("Tabela de símbolos:");
+    printf("   Nome     Tipo     Escopo     Linhas   \n");
+    printf("-----------------------------------------\n");
+
+    for(i = 0; i < TAM; ++i){
+        if (tab_hash[i] != NULL){
+            ts = tab_hash[i];
+            while(ts != NULL){
+                printf("%-10s", ts->nome);
+                printf("%-8d", ts->tipo);
+                printf("%-10s ", ts->escopo);
+                
+                l = ts->linhas;
+                while(l != NULL){
+                    printf("%d ", l->linha_v);
+                    l = l->prox;
+                }
+                printf("\n");
+                ts = ts->prox;
+            }
+        }
+    }
+}
+
+void libera_tabela(){
+    Ptabela atual, temp;
+    Plinhas l, temp_l;
+    int i;
+
+    if (tab_hash == NULL) return;
+    
+    for(i = 0; i < TAM; i++){
+        atual = tab_hash[i];
+        while(atual != NULL){
+            temp = atual;
+            atual = atual->prox;
+            
+    
+            l = temp->linhas;
+            while(l != NULL){
+                temp_l = l;
+                l = l->prox;
+                free(temp_l);
+            }
+            
+            free(temp->nome);
+            free(temp->escopo);
+            free(temp);
+        }
+    }
+    free(tab_hash);
+    tab_hash = NULL;
 }
 
 void yyerror(const char * msg)
