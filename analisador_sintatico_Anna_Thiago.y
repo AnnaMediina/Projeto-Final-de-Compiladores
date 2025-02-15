@@ -20,7 +20,7 @@ typedef Tlinhas *Plinhas;
 
 typedef struct tabela{
     char *nome;
-    char tipo;
+    char *tipo;
     char *escopo;
     Plinhas linhas;
     struct tabela *prox;
@@ -413,7 +413,7 @@ int hash(char* k){
     return temp;
 }
 
-void f_insere(char *nome, int tipo, char *escopo, int linha_v){
+void f_insere(char *nome, char *tipo, char *escopo, int linha_v){
     int h = hash(nome);
 
     Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
@@ -429,7 +429,7 @@ void f_insere(char *nome, int tipo, char *escopo, int linha_v){
     tab_hash[h] = ts; 
 }
 
-void insere(char *nome, int linha_v, char *escopo){
+void insere(char *nome, char *escopo, int linha_v){
     int h = hash(nome);
     Ptabela ts = tab_hash[h];
     Plinhas l, noval;
@@ -477,7 +477,7 @@ void print(){
             ts = tab_hash[i];
             while(ts != NULL){
                 printf("%-10s", ts->nome);
-                printf("%-8d", ts->tipo);
+                printf("%-10s", ts->tipo);
                 printf("%-10s ", ts->escopo);
                 
                 l = ts->linhas;
