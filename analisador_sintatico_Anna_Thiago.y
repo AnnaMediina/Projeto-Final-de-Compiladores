@@ -38,7 +38,7 @@ struct arvore{
 
 typedef struct arvore nohS;
 
-nohS *raiz = NULL; // Defina a raiz global da árvore
+nohS *raiz = NULL; // Raiz global da árvore
 
 nohS* criaNoh(char *nome);
 
