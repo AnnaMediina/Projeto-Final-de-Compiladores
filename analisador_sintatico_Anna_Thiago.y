@@ -418,7 +418,7 @@ void f_insere(char *nome, char *tipo, char *escopo, int linha_v){
 
     Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
     ts->nome = strdup(nome);
-    ts->tipo = tipo;
+    ts->tipo = strdup(tipo);
     ts->escopo = strdup(escopo);
 
     ts->linhas = (Plinhas)malloc(sizeof(Tlinhas));
