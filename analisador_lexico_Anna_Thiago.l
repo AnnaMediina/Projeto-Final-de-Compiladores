@@ -7,6 +7,7 @@
 #define TAM 211
 #define INTEIRO 1
 #define VO_ID 0
+#define NONE -1
 
 // Declaração das funções e variáveis globais
 
@@ -101,8 +102,7 @@ struct sup {
 typedef struct sup esc;
 
 int linha = 1;
-int tipoB = 0;
-int tipoT = 0;
+int tipoT = NONE;
 int par = 0;
 int open = 0;
 int open_qnt = 0;
@@ -113,13 +113,17 @@ esc global = {
 };
 esc *atual = &global;
 
-void id(char *id) {
+int id(char *id) {
     if (!busca_id(id, atual->escopo)) {
         if (atual->prev != NULL){
             if (!busca_id(id, atual->prev->escopo)) {
                 nome = malloc(sizeof(char)*strlen(id));
                 strcpy(nome, id);
-                par = 1;    
+                if (tipoT == NONE) {
+                    printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                    return ERRO;
+                }
+                par = 1;
             }
             else {
                 insere(id, atual->prev->escopo, linha);
@@ -128,21 +132,32 @@ void id(char *id) {
         else {
             nome = malloc(sizeof(char)*strlen(id));
             strcpy(nome, id);
+            if (tipoT == NONE) {
+                printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                return ERRO;
+            }
             par = 1;
         }
     }
     else {
         insere(id, atual->escopo, linha);
     }
+    return ID;
 }
 
-void abprt() {
+int abprt() {
     if (par) {
-        if (tipoT) { // Para variar tipo de variavel ou funcao
-            f_insere(nome, tipoT, "funcao", atual->escopo, linha);
+        if (tipoT == INTEIRO) { // Para variar tipo de variavel ou funcao
+            f_insere(nome, INTEIRO, "funcao", atual->escopo, linha);
+            tipoT = NONE;
         }
-        else {
-            f_insere(nome, tipoT, "funcao", atual->escopo, linha);
+        else if (tipoT == VO_ID) {
+            f_insere(nome, VO_ID, "funcao", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else{
+            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            return ERRO;
         }
         esc *new_escopo = malloc(sizeof(esc));
         new_escopo->escopo = malloc(sizeof(char)*strlen(nome));
@@ -150,22 +165,66 @@ void abprt() {
         new_escopo->prev = atual;
         atual = new_escopo;
         par = 0;
-        tipoB = 0;
         open = 1;
     }
+    return AB_PRT;
 }
 
-void ptvg() {
+int ptvg() {
     if (par) {
-        if (tipoT) { // Para variar tipo de variavel ou funcao
-            f_insere(nome, tipoT, "variavel", atual->escopo, linha);
+        if (tipoT == INTEIRO) { // Para variar tipo de variavel ou funcao
+            f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
+            tipoT = NONE;
         }
-        else {
-            f_insere(nome, tipoT, "variavel", atual->escopo, linha);
+        else if (tipoT == VO_ID) {
+            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else{
+            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            return ERRO;
         }
         par = 0;
-        tipoB = 0;
     }
+    return PT_VG;
+}
+
+int vg() {
+    if (par) {
+        if (tipoT == INTEIRO) { // Para variar tipo de variavel ou funcao
+            f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else if (tipoT == VO_ID) {
+            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else{
+            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            return ERRO;
+        }
+        par = 0;
+    }
+    return VG;
+}
+
+int feprt() {
+    if (par) {
+        if (tipoT == INTEIRO) { // Para variar tipo de variavel ou funcao
+            f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else if (tipoT == VO_ID) {
+            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
+            tipoT = NONE;
+        }
+        else{
+            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            return ERRO;
+        }
+        par = 0;
+    }
+    return FE_PRT;
 }
 
 void abcv() {
@@ -192,15 +251,15 @@ void fecv() {
 
 
 %%
-"int"         { tipoT = 1; return INT; }
-"void"        { tipoT = 0; return VOID; }
+"int"         { tipoT = INTEIRO; return INT; }
+"void"        { tipoT = VO_ID; return VOID; }
 "if"          { return IF; }
 "else"        { return ELSE; }
 "return"      { return RETURN; }
 "while"       { return WHILE; }
 
 [0-9]+        { return NUM; }
-[A-Za-z]+     { id(yytext); return ID; }
+[A-Za-z]+     { return id(yytext); }
 
 "+"           { return ADD; }
 "-"           { return SUB; }
@@ -216,12 +275,12 @@ void fecv() {
 "["           { return AB_COL; }
 "]"           { return FE_COL; }
 "="           { return IGUAL; }
-"("           { abprt(); return AB_PRT; }
-")"           { ptvg(); return FE_PRT; }
+"("           { return abprt(); }
+")"           { return feprt(); }
 "{"           { abcv(); return AB_CV; }
 "}"           { fecv(); return FE_CV; }
-";"           { ptvg(); return PT_VG; }
-","           { ptvg(); return VG; }
+";"           { return ptvg(); }
+","           { return vg(); }
 
 "\n"		  { ++linha; }
 
