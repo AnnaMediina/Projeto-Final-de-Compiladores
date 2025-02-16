@@ -126,6 +126,10 @@ int id(char *id) {
                 par = 1;
             }
             else {
+                if (tipoT == INTEIRO || tipoT == VO_ID) {
+                    printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                    return ERRO;
+                }
                 insere(id, atual->prev->escopo, linha);
             }
         }
@@ -140,6 +144,10 @@ int id(char *id) {
         }
     }
     else {
+        if (tipoT == INTEIRO || tipoT == VO_ID) {
+            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            return ERRO;
+        }
         insere(id, atual->escopo, linha);
     }
     return ID;
@@ -224,6 +232,7 @@ int feprt() {
         }
         par = 0;
     }
+    tipoT = NONE;
     return FE_PRT;
 }
 
