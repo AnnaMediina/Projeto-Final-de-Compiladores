@@ -5,6 +5,8 @@
 #include "analisador_sintatico_Anna_Thiago.tab.h"
 
 #define TAM 211
+#define INTEIRO 1
+#define VO_ID 0
 
 // Declaração das funções e variáveis globais
 
@@ -18,8 +20,8 @@ typedef Tlinhas *Plinhas;
 
 typedef struct tabela{
     char *nome;
-    char *tipo;
-    int tipo_dado;
+    int tipo_dado; //int ou void
+    char *tipo; //func ou variav
     char *escopo;
     Plinhas linhas;
     struct tabela *prox;

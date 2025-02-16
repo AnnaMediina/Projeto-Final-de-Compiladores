@@ -435,8 +435,8 @@ void inicializa_tabela(){
     for(i = 0; i < TAM; i++) {
         tab_hash[i] = NULL;
     }
-    f_insere_s("input", 0, "funcao", "global", 0);
-    f_insere_s("output", 1, "funcao", "global", 0);
+    f_insere_s("input", 1, "funcao", "global", 0);
+    f_insere_s("output", 0, "funcao", "global", 0);
 }
 
 void print(){
@@ -454,13 +454,13 @@ void print(){
             while(ts != NULL){
                 printf("%-10s", ts->nome);
                 if(ts->tipo_dado == 1){
-                    printf("int");
+                    printf("%-14s", "int");
                 }
                 if(ts->tipo_dado == 0){
-                    printf("void");
+                    printf("%-14s", "void");
                 }
-                printf("%-10s", ts->tipo);
-                printf("%-10s ", ts->escopo);
+                printf("%-14s", ts->tipo);
+                printf("%-14s ", ts->escopo);
                 
                 l = ts->linhas;
                 while(l != NULL){
@@ -519,7 +519,7 @@ int main()
   if(resultado == 0){
     printf("Análise sintática feita com sucesso!\n");
     if (raiz != NULL) {
-      // printNoh(raiz, 0, NULL);
+      printNoh(raiz, 0, NULL);
       liberaArvore(raiz);
     }
     if (tab_hash != NULL){
