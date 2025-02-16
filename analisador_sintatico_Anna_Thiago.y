@@ -28,7 +28,8 @@ typedef struct tabela{
 
 typedef  Ttabela *Ptabela;
 
-static Ptabela *tab_hash = NULL;
+extern Ptabela *tab_hash;
+
 
 struct arvore{
     char nome [30];
@@ -43,6 +44,12 @@ nohS *raiz = NULL; // Raiz global da árvore
 nohS* criaNoh(char *nome);
 
 void adicionaFilho(nohS *pai, nohS *filho);
+
+void inicializa_tabela();
+
+void print();
+
+void libera_tabela();
 
 %}
 
@@ -394,16 +401,7 @@ void liberaArvore(nohS *pai) {
     free(pai);
 }
 
-void inicializa_tabela(){
-    int i;
-
-    tab_hash = (Ptabela*)malloc(TAM * sizeof(Ptabela));
-    for(i = 0; i < TAM; i++) {
-        tab_hash[i] = NULL;
-    }
-}
-
-int hash(char* k){
+int hash_s(char* k){
     int temp = 0;
     int i = 0;
     while (k[i] != '\0'){
@@ -413,8 +411,8 @@ int hash(char* k){
     return temp;
 }
 
-void f_insere(char *nome, char *tipo, char *escopo, int linha_v){
-    int h = hash(nome);
+void f_insere_s(char *nome, char *tipo, char *escopo, int linha_v){
+    int h = hash_s(nome);
 
     Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
     ts->nome = strdup(nome);
@@ -429,38 +427,15 @@ void f_insere(char *nome, char *tipo, char *escopo, int linha_v){
     tab_hash[h] = ts; 
 }
 
-void insere(char *nome, char *escopo, int linha_v){
-    int h = hash(nome);
-    Ptabela ts = tab_hash[h];
-    Plinhas l, noval;
+void inicializa_tabela(){
+    int i;
 
-    while(ts != NULL){
-        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
-            l = ts->linhas;
-
-            while(l->prox != NULL) l = l->prox;
-
-            noval = (Plinhas)malloc(sizeof(Tlinhas));
-            noval->linha_v = linha_v;
-            noval->prox = NULL;
-            l->prox = noval;
-            return;
-        }
-        ts = ts->prox;
+    tab_hash = (Ptabela*)malloc(TAM * sizeof(Ptabela));
+    for(i = 0; i < TAM; i++) {
+        tab_hash[i] = NULL;
     }
-}
-
-int busca_id(char *nome, char*escopo){
-    int h = hash(nome);
-    Ptabela ts = tab_hash[h];
-
-    while(ts != NULL){
-        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
-            return 1;
-        }
-        ts = ts->prox;
-    }
-    return 0;
+    f_insere_s("input", "funcao", "global", 0);
+    f_insere_s("output", "funcao", "global", 0);
 }
 
 void print(){
@@ -531,13 +506,18 @@ void yyerror(const char * msg)
 int main()
 {
   printf("Início análise sintática\n");
+  inicializa_tabela();
   int resultado = yyparse();
 
   if(resultado == 0){
     printf("Análise sintática feita com sucesso!\n");
     if (raiz != NULL) {
-      printNoh(raiz, 0, NULL);
+      // printNoh(raiz, 0, NULL);
       liberaArvore(raiz);
+    }
+    if (tab_hash != NULL){
+        print();
+        libera_tabela();
     }
   }
 }
