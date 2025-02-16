@@ -19,6 +19,7 @@ typedef Tlinhas *Plinhas;
 typedef struct tabela{
     char *nome;
     char *tipo;
+    int tipo_dado;
     char *escopo;
     Plinhas linhas;
     struct tabela *prox;
@@ -39,11 +40,12 @@ int hash(char* k){
     return temp;
 }
 
-void f_insere(char *nome, char *tipo, char *escopo, int linha_v){
+void f_insere(char *nome, int tipo_dado, char *tipo, char *escopo, int linha_v){
     int h = hash(nome);
 
     Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
     ts->nome = strdup(nome);
+    ts->tipo_dado = tipo_dado;
     ts->tipo = strdup(tipo);
     ts->escopo = strdup(escopo);
 
@@ -135,10 +137,10 @@ void id(char *id) {
 void abprt() {
     if (par) {
         if (tipoT) { // Para variar tipo de variavel ou funcao
-            f_insere(nome, "funcao", atual->escopo, linha);
+            f_insere(nome, tipoT, "funcao", atual->escopo, linha);
         }
         else {
-            f_insere(nome, "funcao", atual->escopo, linha);
+            f_insere(nome, tipoT, "funcao", atual->escopo, linha);
         }
         esc *new_escopo = malloc(sizeof(esc));
         new_escopo->escopo = malloc(sizeof(char)*strlen(nome));
@@ -154,10 +156,10 @@ void abprt() {
 void ptvg() {
     if (par) {
         if (tipoT) { // Para variar tipo de variavel ou funcao
-            f_insere(nome, "variavel", atual->escopo, linha);
+            f_insere(nome, tipoT, "variavel", atual->escopo, linha);
         }
         else {
-            f_insere(nome, "variavel", atual->escopo, linha);
+            f_insere(nome, tipoT, "variavel", atual->escopo, linha);
         }
         par = 0;
         tipoB = 0;
