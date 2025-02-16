@@ -184,10 +184,6 @@ int ptvg() {
             f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
             tipoT = NONE;
         }
-        else if (tipoT == VO_ID) {
-            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
-            tipoT = NONE;
-        }
         else{
             printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
             return ERRO;
@@ -203,10 +199,6 @@ int vg() {
             f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
             tipoT = NONE;
         }
-        else if (tipoT == VO_ID) {
-            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
-            tipoT = NONE;
-        }
         else{
             printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
             return ERRO;
@@ -220,10 +212,6 @@ int feprt() {
     if (par) {
         if (tipoT == INTEIRO) { // Para variar tipo de variavel ou funcao
             f_insere(nome, INTEIRO, "variavel", atual->escopo, linha);
-            tipoT = NONE;
-        }
-        else if (tipoT == VO_ID) {
-            f_insere(nome, VO_ID, "variavel", atual->escopo, linha);
             tipoT = NONE;
         }
         else{
