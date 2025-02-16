@@ -2,7 +2,7 @@ all:
 	bison -d analisador_sintatico_Anna_Thiago.y
 	flex analisador_lexico_Anna_Thiago.l
 	gcc -c lex.yy.c
-	gcc -o analisador lex.yy.o analisador_sintatico_Anna_Thiago.tab.c -lfl
+	gcc -o analisador lex.yy.o analisador_sintatico_Anna_Thiago.tab.c -lfl -fPIC
 
 run:
 	./analisador < ./sort.txt
