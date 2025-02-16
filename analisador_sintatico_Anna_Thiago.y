@@ -20,7 +20,8 @@ typedef Tlinhas *Plinhas;
 
 typedef struct tabela{
     char *nome;
-    char *tipo;
+    int tipo_dado; //int ou void
+    char *tipo; //func ou variav
     char *escopo;
     Plinhas linhas;
     struct tabela *prox;
@@ -29,7 +30,6 @@ typedef struct tabela{
 typedef  Ttabela *Ptabela;
 
 extern Ptabela *tab_hash;
-
 
 struct arvore{
     char nome [30];
@@ -411,11 +411,12 @@ int hash_s(char* k){
     return temp;
 }
 
-void f_insere_s(char *nome, char *tipo, char *escopo, int linha_v){
+void f_insere_s(char *nome, int tipo_dado, char *tipo, char *escopo, int linha_v){
     int h = hash_s(nome);
 
     Ptabela ts = (Ptabela)malloc(sizeof(Ttabela));
     ts->nome = strdup(nome);
+    ts->tipo_dado = tipo_dado;
     ts->tipo = strdup(tipo);
     ts->escopo = strdup(escopo);
 
@@ -434,8 +435,8 @@ void inicializa_tabela(){
     for(i = 0; i < TAM; i++) {
         tab_hash[i] = NULL;
     }
-    f_insere_s("input", "funcao", "global", 0);
-    f_insere_s("output", "funcao", "global", 0);
+    f_insere_s("input", 0, "funcao", "global", 0);
+    f_insere_s("output", 1, "funcao", "global", 0);
 }
 
 void print(){
@@ -443,15 +444,21 @@ void print(){
     Plinhas l;
     Ptabela ts;
 
-    printf("Tabela de símbolos:");
-    printf("   Nome     Tipo     Escopo     Linhas   \n");
-    printf("-----------------------------------------\n");
+    printf("\n==============Tabela de símbolos==============\n");
+    printf(" Nome     Tipo_Dado     Categoria     Escopo     Linhas   \n");
+    printf("------------------------------------------------------\n");
 
     for(i = 0; i < TAM; ++i){
         if (tab_hash[i] != NULL){
             ts = tab_hash[i];
             while(ts != NULL){
                 printf("%-10s", ts->nome);
+                if(ts->tipo_dado == 1){
+                    printf("int");
+                }
+                if(ts->tipo_dado == 0){
+                    printf("void");
+                }
                 printf("%-10s", ts->tipo);
                 printf("%-10s ", ts->escopo);
                 
