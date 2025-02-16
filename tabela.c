@@ -154,9 +154,9 @@ void libera_tabela(){
 int main(){
     inicializa_tabela();
     
-    f_insere("main", "função","global", 1);
-    f_insere("x", "variável", "main", 2);
-    f_insere("y", "variável", "main", 2);
+    f_insere("main", "funcao","global", 1);
+    f_insere("x", "variavel", "main", 2);
+    f_insere("y", "variavel", "main", 2);
     
     insere("x", "main", 3);
     insere("y", "main", 4);
