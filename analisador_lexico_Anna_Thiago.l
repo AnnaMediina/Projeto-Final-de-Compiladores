@@ -94,6 +94,19 @@ int busca_id(char *nome, char*escopo){
     return 0;
 }
 
+int busca_id_tipo(char *nome, char*escopo){
+    int h = hash(nome);
+    Ptabela ts = tab_hash[h];
+
+    while(ts != NULL){
+        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
+            return ts->tipo_dado;
+        }
+        ts = ts->prox;
+    }
+    return 0;
+}
+
 
 struct sup {
     char* escopo;
@@ -112,6 +125,7 @@ esc global = {
     .prev = NULL,
 };
 esc *atual = &global;
+int attr = 0;
 
 int id(char *id) {
     if (!busca_id(id, atual->escopo)) {
@@ -131,6 +145,12 @@ int id(char *id) {
                     return ERRO;
                 }
                 insere(id, atual->prev->escopo, linha);
+                if (attr == 1) {
+                    if (!busca_id_tipo(id, atual->escopo) && !busca_id_tipo(id, atual->prev->escopo)) {
+                        printf("\nERRO SEMANTICO: %s LINHA: %d void\n", yytext, linha);
+                        return ERRO;
+                    }
+                }
             }
         }
         else {
@@ -149,6 +169,12 @@ int id(char *id) {
             return ERRO;
         }
         insere(id, atual->escopo, linha);
+        if (attr == 1) {
+            if (!busca_id_tipo(id, atual->escopo) && !busca_id_tipo(id, atual->prev->escopo)) {
+                printf("\nERRO SEMANTICO: %s LINHA: %d void\n", yytext, linha);
+                return ERRO;
+            }
+        }
     }
     return ID;
 }
@@ -262,21 +288,21 @@ void fecv() {
 "-"           { return SUB; }
 "*"           { return MULT; }
 "/"           { return DIV; }
-">"           { return MAIOR; }
-"<"           { return MENOR; }
-"<="          { return MEN_IGL; }
-">="          { return MAI_IGL; }
-"=="          { return COMP_IGL; }
-"!="          { return DIFF_IGL; }
+">"           { attr = 1; return MAIOR; }
+"<"           { attr = 1; return MENOR; }
+"<="          { attr = 1; return MEN_IGL; }
+">="          { attr = 1; return MAI_IGL; }
+"=="          { attr = 1; return COMP_IGL; }
+"!="          { attr = 1; return DIFF_IGL; }
 
 "["           { return AB_COL; }
 "]"           { return FE_COL; }
-"="           { return IGUAL; }
+"="           { attr = 1; return IGUAL; }
 "("           { return abprt(); }
-")"           { return feprt(); }
+")"           { attr = 0; return feprt(); }
 "{"           { abcv(); return AB_CV; }
 "}"           { fecv(); return FE_CV; }
-";"           { return ptvg(); }
+";"           { attr = 0; return ptvg(); }
 ","           { return vg(); }
 
 "\n"		  { ++linha; }

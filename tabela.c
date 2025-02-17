@@ -161,6 +161,19 @@ int busca_id(char *nome, char*escopo){
     return 0;
 }
 
+int busca_id_tipo(char *nome, char*escopo){
+    int h = hash(nome);
+    Ptabela ts = tab_hash[h];
+
+    while(ts != NULL){
+        if(strcmp(nome, ts->nome) == 0 && strcmp(escopo, ts->escopo) == 0){
+            return ts->tipo_dado;
+        }
+        ts = ts->prox;
+    }
+    return 0;
+}
+
 int main(){
     inicializa_tabela();
     
