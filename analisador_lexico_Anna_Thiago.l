@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "at_parser.tab.h"
+#include "analisador_sintatico_Anna_Thiago.tab.h"
 
 #define TAM 211
 #define INTEIRO 1
