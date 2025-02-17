@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "analisador_sintatico_Anna_Thiago.tab.h"
+#include "at_parser.tab.h"
 
 #define TAM 211
 #define INTEIRO 1
@@ -134,20 +134,20 @@ int id(char *id) {
                 nome = malloc(sizeof(char)*strlen(id));
                 strcpy(nome, id);
                 if (tipoT == NONE) {
-                    printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+                    printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
                     return ERRO;
                 }
                 par = 1;
             }
             else {
                 if (tipoT == INTEIRO || tipoT == VO_ID) {
-                    printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+                    printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
                     return ERRO;
                 }
                 insere(id, atual->prev->escopo, linha);
                 if (attr == 1) {
                     if (!busca_id_tipo(id, atual->escopo) && !busca_id_tipo(id, atual->prev->escopo)) {
-                        printf("\nERRO SEMANTICO: %s LINHA: %d void\n", yytext, linha);
+                        printf("\nERRO SEMÂNTICO: %s LINHA: %d void\n", yytext, linha);
                         return ERRO;
                     }
                 }
@@ -157,7 +157,7 @@ int id(char *id) {
             nome = malloc(sizeof(char)*strlen(id));
             strcpy(nome, id);
             if (tipoT == NONE) {
-                printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+                printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
                 return ERRO;
             }
             par = 1;
@@ -165,13 +165,13 @@ int id(char *id) {
     }
     else {
         if (tipoT == INTEIRO || tipoT == VO_ID) {
-            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         insere(id, atual->escopo, linha);
         if (attr == 1) {
             if (!busca_id_tipo(id, atual->escopo) && !busca_id_tipo(id, atual->prev->escopo)) {
-                printf("\nERRO SEMANTICO: %s LINHA: %d void\n", yytext, linha);
+                printf("\nERRO SEMÂNTICO: %s LINHA: %d void\n", yytext, linha);
                 return ERRO;
             }
         }
@@ -190,7 +190,7 @@ int abprt() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         esc *new_escopo = malloc(sizeof(esc));
@@ -211,7 +211,7 @@ int ptvg() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
@@ -226,7 +226,7 @@ int vg() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
@@ -241,7 +241,7 @@ int feprt() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMÂNTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
@@ -310,6 +310,7 @@ void fecv() {
 " "			  { }
 "\t"		  { }
 [\r]+         { /* Ignorar */ }
+"/*"([^*]|\*+[^*/])*"*"+"/"   { /* Ignorar */ }
 .             { printf("\nERRO LÉXICO: %s LINHA: %d\n", yytext, linha); return ERRO; }
 
 %%
