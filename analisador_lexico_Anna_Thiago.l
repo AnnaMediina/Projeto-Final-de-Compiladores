@@ -120,14 +120,14 @@ int id(char *id) {
                 nome = malloc(sizeof(char)*strlen(id));
                 strcpy(nome, id);
                 if (tipoT == NONE) {
-                    printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                    printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
                     return ERRO;
                 }
                 par = 1;
             }
             else {
                 if (tipoT == INTEIRO || tipoT == VO_ID) {
-                    printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                    printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
                     return ERRO;
                 }
                 insere(id, atual->prev->escopo, linha);
@@ -137,7 +137,7 @@ int id(char *id) {
             nome = malloc(sizeof(char)*strlen(id));
             strcpy(nome, id);
             if (tipoT == NONE) {
-                printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+                printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
                 return ERRO;
             }
             par = 1;
@@ -145,7 +145,7 @@ int id(char *id) {
     }
     else {
         if (tipoT == INTEIRO || tipoT == VO_ID) {
-            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         insere(id, atual->escopo, linha);
@@ -164,7 +164,7 @@ int abprt() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         esc *new_escopo = malloc(sizeof(esc));
@@ -185,7 +185,7 @@ int ptvg() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
@@ -200,7 +200,7 @@ int vg() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
@@ -215,7 +215,7 @@ int feprt() {
             tipoT = NONE;
         }
         else{
-            printf("\nERRO Semantico: %s LINHA: %d\n", yytext, linha);
+            printf("\nERRO SEMANTICO: %s LINHA: %d\n", yytext, linha);
             return ERRO;
         }
         par = 0;
